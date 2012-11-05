@@ -25,9 +25,18 @@ public abstract class SlaveInstaller implements Serializable {
     /**
      * Possibly multi-line text that explains in more details what {@link #install(LaunchConfiguration)}
      * would do. This message should be used by the caller to confirm the user's intention
-     * before actually executing {@link #install(LaunchConfiguration)}
+     * before actually executing {@link #install(LaunchConfiguration)}.
+     *
+     * The text needs to be wrapped around 72 chars. No HTML is allowed.
      */
     public abstract Localizable getConfirmationText();
 
+    /**
+     * Installs the slave as a service, quit the current JVM, and let the newly installed service
+     * spawns and connects as a slave.
+     *
+     * The JVM termination is tied to the installation as some service wrappers (such as launchd)
+     * cannot distinguish the service installation and launch.
+     */
     public abstract void install(LaunchConfiguration params) throws InstallationException, IOException, InterruptedException;
 }
