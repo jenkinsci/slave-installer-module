@@ -16,16 +16,16 @@ public abstract class SlaveInstaller implements Serializable {
     /**
      * Short one-line human readable name of what this slave installer does.
      * This can be used as a GUI menu item, text in the button, etc, to
-     * have the user initiate the {@link #install(LaunchConfiguration)} call.
+     * have the user initiate the {@link #install(LaunchConfiguration,Prompter)} call.
      */
     public String getDisplayName() {
         return Messages.InstallerGui_DisplayName();
     }
 
     /**
-     * Possibly multi-line text that explains in more details what {@link #install(LaunchConfiguration)}
+     * Possibly multi-line text that explains in more details what {@link #install(LaunchConfiguration,Prompter)}
      * would do. This message should be used by the caller to confirm the user's intention
-     * before actually executing {@link #install(LaunchConfiguration)}.
+     * before actually executing {@link #install(LaunchConfiguration,Prompter)}.
      *
      * The text needs to be wrapped around 72 chars. No HTML is allowed.
      */
@@ -38,5 +38,5 @@ public abstract class SlaveInstaller implements Serializable {
      * The JVM termination is tied to the installation as some service wrappers (such as launchd)
      * cannot distinguish the service installation and launch.
      */
-    public abstract void install(LaunchConfiguration params) throws InstallationException, IOException, InterruptedException;
+    public abstract void install(LaunchConfiguration params, Prompter prompter) throws InstallationException, IOException, InterruptedException;
 }

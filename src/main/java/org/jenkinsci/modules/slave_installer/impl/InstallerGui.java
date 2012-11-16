@@ -10,6 +10,7 @@ import org.jenkinsci.modules.slave_installer.LaunchConfiguration;
 import org.jenkinsci.modules.slave_installer.SlaveInstaller;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -62,7 +63,8 @@ public class InstallerGui implements Callable<Void,IOException> {
                             LaunchConfiguration config = LAUNCH_CONFIG;
                             if (config==null)
                                 config = new JnlpLaunchConfiguration(jnlpUrl);
-                            installer.install(config);
+                            dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                            installer.install(config,new SwingPrompter());
                         } catch (InstallationException t) {
                             JOptionPane.showMessageDialog(dialog,t.getMessage(),"Error", ERROR_MESSAGE);
                         } catch (Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed

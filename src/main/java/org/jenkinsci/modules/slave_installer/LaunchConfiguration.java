@@ -1,7 +1,5 @@
 package org.jenkinsci.modules.slave_installer;
 
-import hudson.remoting.Channel;
-import hudson.remoting.Which;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
@@ -24,5 +22,4 @@ public abstract class LaunchConfiguration {
      * Decides the arguments to the jar file to be started by the service wrapper.
      */
     public abstract ArgumentListBuilder buildRunnerArguments();
-
 }
