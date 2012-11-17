@@ -13,7 +13,7 @@ public abstract class Prompter {
      */
     public abstract String prompt(String question, String defaultValue) throws InterruptedException;
 
-    public final String prompt(String question) {
+    public final String prompt(String question) throws InterruptedException {
         return prompt(question,null);
     }
 
