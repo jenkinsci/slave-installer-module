@@ -52,6 +52,8 @@ public class InstallerGui implements Callable<Void,IOException> {
                 JMenu m = mainMenu.getFileMenu();
                 JMenuItem menu = new JMenuItem(installer.getDisplayName());
                 menu.addActionListener(new ActionListener() {
+                    private Exception problem;
+
                     public void actionPerformed(ActionEvent e) {
                         try {
                             // final confirmation before taking an action
@@ -60,11 +62,25 @@ public class InstallerGui implements Callable<Void,IOException> {
                                     installer.getDisplayName(), OK_CANCEL_OPTION);
                             if(r!=JOptionPane.OK_OPTION)    return;
 
-                            LaunchConfiguration config = LAUNCH_CONFIG;
-                            if (config==null)
-                                config = new JnlpLaunchConfiguration(jnlpUrl);
                             dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                            installer.install(config,new SwingPrompter());
+
+                            Thread t = new Thread("installer") {
+                                @Override
+                                public void run() {
+                                    problem = null;
+                                    LaunchConfiguration config = LAUNCH_CONFIG;
+                                    if (config == null)
+                                        config = new JnlpLaunchConfiguration(jnlpUrl);
+                                    try {
+                                        installer.install(config, new SwingPrompter());
+                                    } catch (Exception e) {
+                                        problem = e;
+                                    }
+                                }
+                            };
+                            t.run();
+                            t.join();
+                            if (problem!=null)  throw problem;
                         } catch (InstallationException t) {
                             JOptionPane.showMessageDialog(dialog,t.getMessage(),"Error", ERROR_MESSAGE);
                         } catch (Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed

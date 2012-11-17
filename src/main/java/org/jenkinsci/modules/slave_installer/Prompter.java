@@ -11,11 +11,11 @@ public abstract class Prompter {
      * @param question
      *      The string to be shown to the user. Don't add ':', '?' and so on in the end.
      */
-    public abstract String prompt(String question, String defaultValue);
+    public abstract String prompt(String question, String defaultValue) throws InterruptedException;
 
     public final String prompt(String question) {
         return prompt(question,null);
     }
 
-    public abstract String promptPassword(String question);
+    public abstract String promptPassword(String question) throws InterruptedException;
 }
