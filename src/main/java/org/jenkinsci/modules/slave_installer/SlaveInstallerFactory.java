@@ -2,6 +2,7 @@ package org.jenkinsci.modules.slave_installer;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
+import hudson.remoting.Channel;
 import hudson.slaves.SlaveComputer;
 import jenkins.model.Jenkins;
 
@@ -10,6 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Extension point for installer to put a Java program under a service manager
+ * (such as launchd, Windows Service Control Manager, or upstart.)
+ *
  * @author Kohsuke Kawaguchi
  */
 public abstract class SlaveInstallerFactory implements ExtensionPoint {
@@ -20,7 +24,21 @@ public abstract class SlaveInstallerFactory implements ExtensionPoint {
      * @param c
      *      Slave that's online.
      */
-    public abstract SlaveInstaller createIfApplicable(SlaveComputer c) throws IOException, InterruptedException;
+    // this method was the original abstraction in 1.0, which can be now implemented on top of createIfApplicable(Channel)
+    public SlaveInstaller createIfApplicable(SlaveComputer c) throws IOException, InterruptedException {
+        return createIfApplicable(c.getChannel());
+    }
+
+    /**
+     * If this factory is capable of creating a {@link SlaveInstaller} for the system
+     * that the other end of the given channel runs in, create one and return a {@link SlaveInstaller}.
+     *
+     * @since 1.1
+     */
+    public /*abstract*/ SlaveInstaller createIfApplicable(Channel c) throws IOException, InterruptedException {
+        // to be implemented by subtypes
+        return null;
+    }
 
     public static SlaveInstaller createFor(SlaveComputer c) throws InterruptedException {
         for (SlaveInstallerFactory f : all()) {

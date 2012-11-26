@@ -39,4 +39,8 @@ public abstract class SlaveInstaller implements Serializable {
      * cannot distinguish the service installation and launch.
      */
     public abstract void install(LaunchConfiguration params, Prompter prompter) throws InstallationException, IOException, InterruptedException;
+
+
+    // TODO: uninstall
+    // TODO: reinstall (changing the configuration)
 }
