@@ -26,9 +26,10 @@ public class ComputerListenerImpl extends ComputerListener {
 //        String instanceId = Util.getDigestOf(new String(Base64.encodeBase64(key.getEncoded()))).substring(0,8);
 
         if (c instanceof SlaveComputer) {
-            SlaveInstaller si = SlaveInstallerFactory.createFor((SlaveComputer) c);
+            SlaveComputer sc = (SlaveComputer) c;
+            SlaveInstaller si = SlaveInstallerFactory.createFor(sc);
             if (si!=null)
-                c.getChannel().call(new InstallerGui(si));
+                c.getChannel().call(new InstallerGui(si,sc.getNode().getRootPath()));
         }
     }
 }

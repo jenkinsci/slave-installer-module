@@ -1,5 +1,6 @@
 package org.jenkinsci.modules.slave_installer.impl;
 
+import hudson.FilePath;
 import hudson.Util;
 import hudson.remoting.Callable;
 import hudson.remoting.Engine;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,12 +27,14 @@ import static javax.swing.JOptionPane.*;
  */
 public class InstallerGui implements Callable<Void,IOException> {
     private final SlaveInstaller installer;
+    private final FilePath slaveRoot;
 
     private transient Engine engine;
     private transient MainDialog dialog;
 
-    public InstallerGui(SlaveInstaller installer) {
+    public InstallerGui(SlaveInstaller installer, FilePath slaveRoot) {
         this.installer = installer;
+        this.slaveRoot = slaveRoot;
     }
 
     /**
@@ -69,8 +73,10 @@ public class InstallerGui implements Callable<Void,IOException> {
                                 public void run() {
                                     problem = null;
                                     LaunchConfiguration config = LAUNCH_CONFIG;
-                                    if (config == null)
-                                        config = new JnlpLaunchConfiguration(jnlpUrl);
+                                    if (config == null) {
+                                        assert !slaveRoot.isRemote();
+                                        config = new JnlpLaunchConfiguration(jnlpUrl,new File(slaveRoot.getRemote()));
+                                    }
                                     try {
                                         installer.install(config, new SwingPrompter());
                                     } catch (Exception e) {

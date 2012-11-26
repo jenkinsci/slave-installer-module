@@ -17,9 +17,16 @@ import java.net.URL;
  */
 public class JnlpLaunchConfiguration extends LaunchConfiguration {
     private final URL jnlpUrl;
+    private final File storage;
 
-    public JnlpLaunchConfiguration(URL jnlpUrl) {
+    public JnlpLaunchConfiguration(URL jnlpUrl, File storage) {
         this.jnlpUrl = jnlpUrl;
+        this.storage = storage;
+    }
+
+    @Override
+    public File getStorage() throws IOException {
+        return storage;
     }
 
     public File getJarFile() throws IOException {
