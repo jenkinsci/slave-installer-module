@@ -6,6 +6,7 @@ import hudson.remoting.Callable;
 import hudson.remoting.Engine;
 import hudson.remoting.jnlp.MainDialog;
 import hudson.remoting.jnlp.MainMenu;
+import hudson.slaves.SlaveComputer;
 import org.jenkinsci.modules.slave_installer.InstallationException;
 import org.jenkinsci.modules.slave_installer.LaunchConfiguration;
 import org.jenkinsci.modules.slave_installer.SlaveInstaller;
@@ -25,16 +26,18 @@ import static javax.swing.JOptionPane.*;
 /**
  * @author Kohsuke Kawaguchi
  */
-public class InstallerGui implements Callable<Void,IOException> {
+class InstallerGui implements Callable<Void,IOException> {
     private final SlaveInstaller installer;
     private final FilePath slaveRoot;
+    private final String jnlpMac;
 
     private transient Engine engine;
     private transient MainDialog dialog;
 
-    public InstallerGui(SlaveInstaller installer, FilePath slaveRoot) {
+    InstallerGui(SlaveInstaller installer, SlaveComputer sc) {
         this.installer = installer;
-        this.slaveRoot = slaveRoot;
+        this.slaveRoot = sc.getNode().getRootPath();
+        jnlpMac = sc.getJnlpMac();
     }
 
     /**
@@ -75,7 +78,7 @@ public class InstallerGui implements Callable<Void,IOException> {
                                     LaunchConfiguration config = LAUNCH_CONFIG;
                                     if (config == null) {
                                         assert !slaveRoot.isRemote();
-                                        config = new JnlpLaunchConfiguration(jnlpUrl,new File(slaveRoot.getRemote()));
+                                        config = new JnlpLaunchConfiguration(jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
                                     }
                                     try {
                                         installer.install(config, new SwingPrompter());
@@ -114,5 +117,6 @@ public class InstallerGui implements Callable<Void,IOException> {
      * This is "recovered", because we can't really reliably tell from within the slave itself, but
      * nonetheless it's a piece of information scoped to the slave JVM. Hence singleton.
      */
+    // XXX what is this for? no one ever writes to it
     public static LaunchConfiguration LAUNCH_CONFIG;
 }

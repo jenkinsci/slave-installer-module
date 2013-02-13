@@ -15,13 +15,15 @@ import java.net.URL;
  *
  * @author Kohsuke Kawaguchi
  */
-public class JnlpLaunchConfiguration extends LaunchConfiguration {
+class JnlpLaunchConfiguration extends LaunchConfiguration {
     private final URL jnlpUrl;
     private final File storage;
+    private final String jnlpMac;
 
-    public JnlpLaunchConfiguration(URL jnlpUrl, File storage) {
+    JnlpLaunchConfiguration(URL jnlpUrl, File storage, String jnlpMac) {
         this.jnlpUrl = jnlpUrl;
         this.storage = storage;
+        this.jnlpMac = jnlpMac;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class JnlpLaunchConfiguration extends LaunchConfiguration {
     public ArgumentListBuilder buildRunnerArguments() {
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("-jnlpUrl").add(jnlpUrl);
+        args.add("-secret").add(jnlpMac);
         return args;
     }
 }

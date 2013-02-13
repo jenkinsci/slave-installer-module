@@ -29,7 +29,7 @@ public class ComputerListenerImpl extends ComputerListener {
             SlaveComputer sc = (SlaveComputer) c;
             SlaveInstaller si = SlaveInstallerFactory.createFor(sc);
             if (si!=null)
-                c.getChannel().call(new InstallerGui(si,sc.getNode().getRootPath()));
+                c.getChannel().call(new InstallerGui(si, sc));
         }
     }
 }
