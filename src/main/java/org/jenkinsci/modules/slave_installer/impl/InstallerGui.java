@@ -87,7 +87,7 @@ class InstallerGui implements Callable<Void,IOException> {
                                     }
                                 }
                             };
-                            t.run();
+                            t.start();
                             t.join();
                             if (problem!=null)  throw problem;
                         } catch (InstallationException t) {
