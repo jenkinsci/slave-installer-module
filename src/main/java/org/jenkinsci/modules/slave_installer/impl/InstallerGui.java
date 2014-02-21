@@ -59,10 +59,7 @@ class InstallerGui implements Callable<Void,IOException> {
                 JMenu m = mainMenu.getFileMenu();
                 JMenuItem menu = new JMenuItem(installer.getDisplayName());
                 menu.addActionListener(new ActionListener() {
-                    private Exception problem;
-
                     public void actionPerformed(ActionEvent e) {
-                        try {
                             // final confirmation before taking an action
                             int r = JOptionPane.showConfirmDialog(dialog,
                                     installer.getConfirmationText(),
@@ -74,29 +71,31 @@ class InstallerGui implements Callable<Void,IOException> {
                             Thread t = new Thread("installer") {
                                 @Override
                                 public void run() {
-                                    problem = null;
-                                    LaunchConfiguration config = LAUNCH_CONFIG;
-                                    if (config == null) {
-                                        assert !slaveRoot.isRemote();
-                                        config = new JnlpLaunchConfiguration(jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
-                                    }
                                     try {
+                                        LaunchConfiguration config = LAUNCH_CONFIG;
+                                        if (config == null) {
+                                            assert !slaveRoot.isRemote();
+                                            config = new JnlpLaunchConfiguration(jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
+                                        }
                                         installer.install(config, new SwingPrompter());
-                                    } catch (Exception e) {
-                                        problem = e;
+                                    } catch (final InstallationException t) {
+                                        error(t.getMessage());
+                                    } catch (final Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed
+                                        StringWriter sw = new StringWriter();
+                                        t.printStackTrace(new PrintWriter(sw));
+                                        error(sw.toString());
                                     }
+                                }
+
+                                private void error(final String msg) {
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        public void run() {
+                                            JOptionPane.showMessageDialog(dialog, msg, "Error", ERROR_MESSAGE);
+                                        }
+                                    });
                                 }
                             };
                             t.start();
-                            t.join();
-                            if (problem!=null)  throw problem;
-                        } catch (InstallationException t) {
-                            JOptionPane.showMessageDialog(dialog,t.getMessage(),"Error", ERROR_MESSAGE);
-                        } catch (Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed
-                            StringWriter sw = new StringWriter();
-                            t.printStackTrace(new PrintWriter(sw));
-                            JOptionPane.showMessageDialog(dialog,sw.toString(),"Error", ERROR_MESSAGE);
-                        }
                     }
                 });
                 m.add(menu);
