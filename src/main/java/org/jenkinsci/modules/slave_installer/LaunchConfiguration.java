@@ -4,6 +4,7 @@ import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Encapsulates what to launch from the service wrapper.
@@ -30,9 +31,26 @@ public abstract class LaunchConfiguration {
     /**
      * Decides the jar file to be launched from the service wrapper.
      *
-     * The file will be copied into another safe location before getting registered..
+     * The file will be copied into another safe location before getting registered.
      */
     public abstract File getJarFile() throws IOException;
+
+    /**
+     * If the up-to-date copy of the jar file returned from {@link #getJarFile()}
+     * is available on Jenkins, return its URL. Installed services will try to
+     * download this URL and overwrites the local copy before launching it,
+     * thereby automating the update.
+     *
+     * <p>
+     * To allow administrators to pin down specific version of the jar and disable
+     * audo-update, {@link SlaveInstaller}s are encouraged to check {@link File#canWrite()}
+     * and skip the download process.
+     *
+     * @since 1.4
+     */
+    public URL getLatestJarURL() throws IOException {
+        return null;
+    }
 
     /**
      * Decides the arguments to the jar file to be started by the service wrapper.

@@ -16,11 +16,13 @@ import java.net.URL;
  * @author Kohsuke Kawaguchi
  */
 class JnlpLaunchConfiguration extends LaunchConfiguration {
+    private final URL jarUrl;
     private final URL jnlpUrl;
     private final File storage;
     private final String jnlpMac;
 
-    JnlpLaunchConfiguration(URL jnlpUrl, File storage, String jnlpMac) {
+    JnlpLaunchConfiguration(URL jarUrl, URL jnlpUrl, File storage, String jnlpMac) {
+        this.jarUrl = jarUrl;
         this.jnlpUrl = jnlpUrl;
         this.storage = storage;
         this.jnlpMac = jnlpMac;
@@ -33,6 +35,11 @@ class JnlpLaunchConfiguration extends LaunchConfiguration {
 
     public File getJarFile() throws IOException {
         return Which.jarFile(Channel.class);
+    }
+
+    @Override
+    public URL getLatestJarURL() throws IOException {
+        return jarUrl;
     }
 
     @Override

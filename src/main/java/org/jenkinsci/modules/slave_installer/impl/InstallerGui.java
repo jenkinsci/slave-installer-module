@@ -51,6 +51,7 @@ class InstallerGui implements Callable<Void,IOException> {
         engine = Engine.current();
         if(engine==null)     return null;    // Ditto
 
+        final URL jarUrl = new URL(engine.getHudsonUrl(),"jnlpJars/slave.jar");
         final URL jnlpUrl = new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(engine.slaveName)+"/slave-agent.jnlp");
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -75,7 +76,7 @@ class InstallerGui implements Callable<Void,IOException> {
                                         LaunchConfiguration config = LAUNCH_CONFIG;
                                         if (config == null) {
                                             assert !slaveRoot.isRemote();
-                                            config = new JnlpLaunchConfiguration(jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
+                                            config = new JnlpLaunchConfiguration(jarUrl, jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
                                         }
                                         installer.install(config, new SwingPrompter());
                                     } catch (final InstallationException t) {
