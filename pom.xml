@@ -8,7 +8,7 @@
 
   <groupId>org.jenkins-ci.modules</groupId>
   <artifactId>slave-installer</artifactId>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.4</version>
   <packaging>jenkins-module</packaging>
   <name>Slave installer</name>
   <description>Base abstraction for platform-specific slave installer</description>
