@@ -53,6 +53,19 @@ public abstract class SlaveInstallerFactory implements ExtensionPoint {
         return null;
     }
 
+    public static SlaveInstaller createFor(Channel c) throws InterruptedException {
+        for (SlaveInstallerFactory f : all()) {
+            try {
+                SlaveInstaller si = f.createIfApplicable(c);
+                if (si!=null)   return si;
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, f+" has failed on "+c.getName(),e);
+                // try the next one
+            }
+        }
+        return null;
+    }
+
     /**
      * All the registered {@link SlaveInstallerFactory}s.
      */
