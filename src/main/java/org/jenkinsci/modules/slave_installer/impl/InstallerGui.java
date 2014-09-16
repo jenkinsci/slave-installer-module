@@ -3,6 +3,7 @@ package org.jenkinsci.modules.slave_installer.impl;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.remoting.Callable;
+import hudson.remoting.Channel;
 import hudson.remoting.Engine;
 import hudson.remoting.jnlp.MainDialog;
 import hudson.remoting.jnlp.MainMenu;
@@ -24,9 +25,12 @@ import java.net.URL;
 import static javax.swing.JOptionPane.*;
 
 /**
+ * When executed via {@link Channel#call(Callable)} on a slave,
+ * adds a GUI menu to install the slave as a platform-specific service.
+ *
  * @author Kohsuke Kawaguchi
  */
-class InstallerGui implements Callable<Void,IOException> {
+public class InstallerGui implements Callable<Void,IOException> {
     private final SlaveInstaller installer;
     private final FilePath slaveRoot;
     private final String jnlpMac;
@@ -34,10 +38,16 @@ class InstallerGui implements Callable<Void,IOException> {
     private transient Engine engine;
     private transient MainDialog dialog;
 
-    InstallerGui(SlaveInstaller installer, SlaveComputer sc) {
+    public InstallerGui(SlaveInstaller installer, SlaveComputer sc) {
         this.installer = installer;
         this.slaveRoot = sc.getNode().getRootPath();
         jnlpMac = sc.getJnlpMac();
+    }
+
+    public InstallerGui(SlaveInstaller installer, FilePath slaveRoot, String jnlpMac) {
+        this.installer = installer;
+        this.slaveRoot = slaveRoot;
+        this.jnlpMac = jnlpMac;
     }
 
     /**
