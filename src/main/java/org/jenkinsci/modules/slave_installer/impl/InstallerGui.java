@@ -96,7 +96,7 @@ public class InstallerGui implements Callable<Void,IOException> {
                                     installer.install(config, new SwingPrompter());
                                 } catch (final InstallationException t) {
                                     error(t.getMessage());
-                                } catch (final Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed
+                                } catch (final Throwable t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed
                                     StringWriter sw = new StringWriter();
                                     t.printStackTrace(new PrintWriter(sw));
                                     error(sw.toString());
