@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import static javax.swing.JOptionPane.*;
@@ -35,8 +36,8 @@ public class InstallerGui implements Callable<Void,IOException> {
     private final FilePath slaveRoot;
     private final String jnlpMac;
 
-    private transient Engine engine;
-    private transient MainDialog dialog;
+    protected transient Engine engine;
+    protected transient MainDialog dialog;
 
     public InstallerGui(SlaveInstaller installer, SlaveComputer sc) {
         this.installer = installer;
@@ -62,7 +63,7 @@ public class InstallerGui implements Callable<Void,IOException> {
         if(engine==null)     return null;    // Ditto
 
         final URL jarUrl = new URL(engine.getHudsonUrl(),"jnlpJars/slave.jar");
-        final URL jnlpUrl = new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(engine.slaveName)+"/slave-agent.jnlp");
+        final URL jnlpUrl = getJnlpUrl();
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -115,6 +116,10 @@ public class InstallerGui implements Callable<Void,IOException> {
         });
 
         return null;
+    }
+
+    protected URL getJnlpUrl() throws MalformedURLException {
+        return new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(engine.slaveName)+"/slave-agent.jnlp");
     }
 
     private static final long serialVersionUID = 1L;
