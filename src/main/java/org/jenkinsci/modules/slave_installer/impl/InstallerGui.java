@@ -72,42 +72,50 @@ public class InstallerGui implements Callable<Void,IOException> {
                 JMenuItem menu = new JMenuItem(installer.getDisplayName());
                 menu.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                            // final confirmation before taking an action
-                            int r = JOptionPane.showConfirmDialog(dialog,
-                                    installer.getConfirmationText(),
-                                    installer.getDisplayName(), OK_CANCEL_OPTION);
-                            if(r!=JOptionPane.OK_OPTION)    return;
+                        // final confirmation before taking an action
+                        int r = JOptionPane.showConfirmDialog(dialog,
+                                installer.getConfirmationText(),
+                                installer.getDisplayName(), OK_CANCEL_OPTION);
+                        if (r != JOptionPane.OK_OPTION) return;
 
-                            dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        final InfiniteProgressPanel glassPane = new InfiniteProgressPanel();
+                        dialog.setGlassPane(glassPane);
+                        glassPane.start();
 
-                            Thread t = new Thread("installer") {
-                                @Override
-                                public void run() {
-                                    try {
-                                        LaunchConfiguration config = LAUNCH_CONFIG;
-                                        if (config == null) {
-                                            assert !slaveRoot.isRemote();
-                                            config = new JnlpLaunchConfiguration(jarUrl, jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
-                                        }
-                                        installer.install(config, new SwingPrompter());
-                                    } catch (final InstallationException t) {
-                                        error(t.getMessage());
-                                    } catch (final Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed
-                                        StringWriter sw = new StringWriter();
-                                        t.printStackTrace(new PrintWriter(sw));
-                                        error(sw.toString());
+                        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                        Thread t = new Thread("installer") {
+                            @Override
+                            public void run() {
+                                try {
+                                    LaunchConfiguration config = LAUNCH_CONFIG;
+                                    if (config == null) {
+                                        assert !slaveRoot.isRemote();
+                                        config = new JnlpLaunchConfiguration(jarUrl, jnlpUrl, new File(slaveRoot.getRemote()), jnlpMac);
                                     }
+                                    installer.install(config, new SwingPrompter());
+                                } catch (final InstallationException t) {
+                                    error(t.getMessage());
+                                } catch (final Exception t) {// this runs as a JNLP app, so if we let an exception go, we'll never find out why it failed
+                                    StringWriter sw = new StringWriter();
+                                    t.printStackTrace(new PrintWriter(sw));
+                                    error(sw.toString());
+                                } finally {
+                                    // disengage the busy dialog
+                                    glassPane.stop();
+                                    dialog.setCursor(null);
                                 }
+                            }
 
-                                private void error(final String msg) {
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        public void run() {
-                                            JOptionPane.showMessageDialog(dialog, msg, "Error", ERROR_MESSAGE);
-                                        }
-                                    });
-                                }
-                            };
-                            t.start();
+                            private void error(final String msg) {
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        JOptionPane.showMessageDialog(dialog, msg, "Error", ERROR_MESSAGE);
+                                    }
+                                });
+                            }
+                        };
+                        t.start();
                     }
                 });
                 m.add(menu);
