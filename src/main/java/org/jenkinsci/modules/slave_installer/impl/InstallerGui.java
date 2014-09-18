@@ -70,6 +70,10 @@ public class InstallerGui implements Callable<Void,IOException> {
                 MainMenu mainMenu = dialog.getMainMenu();
                 JMenu m = mainMenu.getFileMenu();
                 JMenuItem menu = new JMenuItem(installer.getDisplayName());
+
+                final InfiniteProgressPanel glassPane = new InfiniteProgressPanel();
+                dialog.setGlassPane(glassPane);
+
                 menu.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         // final confirmation before taking an action
@@ -78,8 +82,6 @@ public class InstallerGui implements Callable<Void,IOException> {
                                 installer.getDisplayName(), OK_CANCEL_OPTION);
                         if (r != JOptionPane.OK_OPTION) return;
 
-                        final InfiniteProgressPanel glassPane = new InfiniteProgressPanel();
-                        dialog.setGlassPane(glassPane);
                         glassPane.start();
 
                         dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

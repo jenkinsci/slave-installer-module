@@ -2,7 +2,7 @@ package org.jenkinsci.modules.slave_installer.impl;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
@@ -17,7 +17,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author Romain Guy
  */
-public class InfiniteProgressPanel extends JComponent implements MouseListener {
+public class InfiniteProgressPanel extends JComponent {
     protected Area[] ticker = null;
     protected Thread animation = null;
     protected boolean started = false;
@@ -72,7 +72,7 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener {
     }
 
     public void start() {
-        addMouseListener(this);
+        addMouseListener(EMPTY_MOUSE_LISTENER);
         setVisible(true);
         ticker = buildTicker();
         animation = new Thread(new Animator(true));
@@ -93,7 +93,7 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener {
             animation.interrupt();
             animation = null;
 
-            removeMouseListener(this);
+            removeMouseListener(EMPTY_MOUSE_LISTENER);
             setVisible(false);
         }
     }
@@ -142,14 +142,23 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener {
 
             AffineTransform toCenter = AffineTransform.getTranslateInstance(center.getX(), center.getY());
             AffineTransform toBorder = AffineTransform.getTranslateInstance(45.0, -6.0);
-            AffineTransform toCircle = AffineTransform.getRotateInstance(-i * fixedAngle, center.getX(), center.getY());
+            AffineTransform toCircle = AffineTransform.getRotateInstance(-i * fixedAngle);
 
-            AffineTransform toWheel = new AffineTransform();
-            toWheel.concatenate(toCenter);
-            toWheel.concatenate(toBorder);
-
-            primitive.transform(toWheel);
+            // creates a ticker circle around (0,0)
+            primitive.transform(toBorder);
             primitive.transform(toCircle);
+
+            {
+                double radius = Math.min(getWidth(), getHeight())/2;
+                double size = 45 /*from 'toBorder' above*/ + 42 /* size of the pill */ + 20 /*margin*/;
+                if (radius < size) {
+                    // if our tickers are too big for the area, we need to scale it down
+                    primitive.transform(AffineTransform.getScaleInstance(radius / size, radius / size));
+                }
+            }
+
+            primitive.transform(toCenter);
+
 
             ticker[(int) i] = primitive;
         }
@@ -225,23 +234,10 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener {
                 repaint();
 
                 setVisible(false);
-                removeMouseListener(InfiniteProgressPanel.this);
+                removeMouseListener(EMPTY_MOUSE_LISTENER);
             }
         }
     }
 
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    public void mousePressed(MouseEvent e) {
-    }
-
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
+    private static final MouseListener EMPTY_MOUSE_LISTENER = new MouseAdapter(){};
 }
