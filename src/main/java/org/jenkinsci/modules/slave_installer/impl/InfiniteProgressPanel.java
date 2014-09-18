@@ -101,7 +101,6 @@ public class InfiniteProgressPanel extends JComponent {
     public void paintComponent(Graphics g) {
         if (started) {
             int width = getWidth();
-            int height = getHeight();
 
             double maxY = 0.0;
 
@@ -134,33 +133,35 @@ public class InfiniteProgressPanel extends JComponent {
 
     private Area[] buildTicker() {
         Area[] ticker = new Area[barsCount];
-        Point2D.Double center = new Point2D.Double((double) getWidth() / 2, (double) getHeight() / 2);
+        AffineTransform toCenter = AffineTransform.getTranslateInstance(getWidth() / 2, getHeight() / 2);
         double fixedAngle = 2.0 * Math.PI / ((double) barsCount);
 
-        for (double i = 0.0; i < (double) barsCount; i++) {
+        AffineTransform scaler = AffineTransform.getTranslateInstance(0,0);
+        {
+            double radius = Math.min(getWidth(), getHeight())/2;
+            double size = 45 /*from 'toBorder' above*/ + 42 /* size of the pill */ + 20 /*margin*/;
+            if (radius < size) {
+                // if our tickers are too big for the area, we need to scale it down
+                scaler = AffineTransform.getScaleInstance(radius / size, radius / size);
+            }
+        }
+
+        AffineTransform toBorder = AffineTransform.getTranslateInstance(45.0, -6.0);
+
+        for (int i = 0; i < barsCount; i++) {
             Area primitive = buildPrimitive();
 
-            AffineTransform toCenter = AffineTransform.getTranslateInstance(center.getX(), center.getY());
-            AffineTransform toBorder = AffineTransform.getTranslateInstance(45.0, -6.0);
             AffineTransform toCircle = AffineTransform.getRotateInstance(-i * fixedAngle);
 
             // creates a ticker circle around (0,0)
             primitive.transform(toBorder);
             primitive.transform(toCircle);
 
-            {
-                double radius = Math.min(getWidth(), getHeight())/2;
-                double size = 45 /*from 'toBorder' above*/ + 42 /* size of the pill */ + 20 /*margin*/;
-                if (radius < size) {
-                    // if our tickers are too big for the area, we need to scale it down
-                    primitive.transform(AffineTransform.getScaleInstance(radius / size, radius / size));
-                }
-            }
+            primitive.transform(scaler);
 
             primitive.transform(toCenter);
 
-
-            ticker[(int) i] = primitive;
+            ticker[i] = primitive;
         }
 
         return ticker;
