@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static javax.swing.JOptionPane.*;
+import jenkins.security.MasterToSlaveCallable;
 
 /**
  * When executed via {@link Channel#call(Callable)} on an agent,
@@ -31,7 +32,7 @@ import static javax.swing.JOptionPane.*;
  *
  * @author Kohsuke Kawaguchi
  */
-public class InstallerGui implements Callable<Void,IOException> {
+public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
     private final SlaveInstaller installer;
     private final FilePath slaveRoot;
     private final String jnlpMac;

@@ -1,7 +1,7 @@
 package org.jenkinsci.modules.slave_installer;
 
 /**
- * Represents an anticipated failure during {@link SlaveInstaller#install(LaunchConfiguration)}
+ * Represents an anticipated failure during {@link SlaveInstaller#install(org.jenkinsci.modules.slave_installer.LaunchConfiguration, org.jenkinsci.modules.slave_installer.Prompter)}
  * that does not require stack trace printing.
  *
  * <p>
