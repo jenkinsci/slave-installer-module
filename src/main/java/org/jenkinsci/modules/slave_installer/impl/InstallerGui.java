@@ -1,7 +1,9 @@
 package org.jenkinsci.modules.slave_installer.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.FilePath;
 import hudson.Util;
+import hudson.model.Slave;
 import hudson.remoting.Callable;
 import hudson.remoting.Channel;
 import hudson.remoting.Engine;
@@ -42,8 +44,15 @@ public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
 
     public InstallerGui(SlaveInstaller installer, SlaveComputer sc) {
         this.installer = installer;
-        this.slaveRoot = sc.getNode().getRootPath();
-        jnlpMac = sc.getJnlpMac();
+        final Slave node = sc.getNode();
+        if (node == null) {
+            throw new IllegalStateException("The configration has change and the node for computer " + 
+                    sc.getName() + " is removed");
+        }
+        
+        // TODO: missing null check
+        this.slaveRoot = node.getRootPath();
+        this.jnlpMac = sc.getJnlpMac();
     }
 
     public InstallerGui(SlaveInstaller installer, FilePath slaveRoot, String jnlpMac) {
@@ -143,6 +152,7 @@ public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
      * This is "recovered", because we can't really reliably tell from within the agent itself, but
      * nonetheless it's a piece of information scoped to the agent JVM. Hence singleton.
      */
-    // XXX what is this for? no one ever writes to it
+    // TODO: what is this for? no one ever writes to it
+    @SuppressFBWarnings(value = "MS_SHOULD_BE_FINAL", justification = "Retained for API compaltibility")
     public static LaunchConfiguration LAUNCH_CONFIG;
 }

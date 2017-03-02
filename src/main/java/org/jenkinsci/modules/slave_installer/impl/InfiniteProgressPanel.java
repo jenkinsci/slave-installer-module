@@ -133,12 +133,12 @@ public class InfiniteProgressPanel extends JComponent {
 
     private Area[] buildTicker() {
         Area[] ticker = new Area[barsCount];
-        AffineTransform toCenter = AffineTransform.getTranslateInstance(getWidth() / 2, getHeight() / 2);
+        AffineTransform toCenter = AffineTransform.getTranslateInstance(((double)getWidth()) / 2, ((double)getHeight()) / 2);
         double fixedAngle = 2.0 * Math.PI / ((double) barsCount);
 
         AffineTransform scaler = AffineTransform.getTranslateInstance(0,0);
         {
-            double radius = Math.min(getWidth(), getHeight())/2;
+            double radius = ((double)Math.min(getWidth(), getHeight())) / 2;
             double size = 45 /*from 'toBorder' above*/ + 42 /* size of the pill */ + 20 /*margin*/;
             if (radius < size) {
                 // if our tickers are too big for the area, we need to scale it down

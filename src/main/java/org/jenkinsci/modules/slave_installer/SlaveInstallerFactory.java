@@ -68,9 +68,10 @@ public abstract class SlaveInstallerFactory implements ExtensionPoint {
 
     /**
      * All the registered {@link SlaveInstallerFactory}s.
+     * @return collection of the extension point implementations
      */
     public static ExtensionList<SlaveInstallerFactory> all() {
-        return Jenkins.getInstance().getExtensionList(SlaveInstallerFactory.class);
+        return ExtensionList.lookup(SlaveInstallerFactory.class);
     }
 
     private static final Logger LOGGER = Logger.getLogger(SlaveInstallerFactory.class.getName());
