@@ -26,8 +26,8 @@ import java.net.URL;
 import static javax.swing.JOptionPane.*;
 
 /**
- * When executed via {@link Channel#call(Callable)} on a slave,
- * adds a GUI menu to install the slave as a platform-specific service.
+ * When executed via {@link Channel#call(Callable)} on an agent,
+ * adds a GUI menu to install the agent as a platform-specific service.
  *
  * @author Kohsuke Kawaguchi
  */
@@ -52,7 +52,7 @@ public class InstallerGui implements Callable<Void,IOException> {
     }
 
     /**
-     * To be executed on each slave JVM.
+     * To be executed on each agent JVM.
      */
     public Void call() throws IOException {
         dialog = MainDialog.get();
@@ -136,11 +136,11 @@ public class InstallerGui implements Callable<Void,IOException> {
 
     /**
      * {@link LaunchConfiguration} that controls what process will be run under the service wrapper
-     * when the slave installation happens through GUI.
+     * when the agent installation happens through GUI.
      *
-     * Conceptually, this can be thought of as a recovered memory of how this slave JVM has been started.
-     * This is "recovered", because we can't really reliably tell from within the slave itself, but
-     * nonetheless it's a piece of information scoped to the slave JVM. Hence singleton.
+     * Conceptually, this can be thought of as a recovered memory of how this agent JVM has been started.
+     * This is "recovered", because we can't really reliably tell from within the agent itself, but
+     * nonetheless it's a piece of information scoped to the agent JVM. Hence singleton.
      */
     // XXX what is this for? no one ever writes to it
     public static LaunchConfiguration LAUNCH_CONFIG;

@@ -10,8 +10,8 @@
   <artifactId>slave-installer</artifactId>
   <version>1.6-SNAPSHOT</version>
   <packaging>jenkins-module</packaging>
-  <name>Slave installer</name>
-  <description>Base abstraction for platform-specific slave installer</description>
+  <name>Agent installer module</name>
+  <description>Base abstraction for platform-specific Jenkins agent installer</description>
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-module.git</connection>
