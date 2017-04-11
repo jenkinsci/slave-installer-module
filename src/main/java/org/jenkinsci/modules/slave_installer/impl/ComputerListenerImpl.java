@@ -11,7 +11,7 @@ import org.jenkinsci.modules.slave_installer.SlaveInstallerFactory;
 import java.io.IOException;
 
 /**
- * Inserts {@link InstallerGui} to a slave that has JNLP GUI.
+ * Inserts {@link InstallerGui} to a Jenkins agent that has JNLP GUI.
  *
  * @author Kohsuke Kawaguchi
  */

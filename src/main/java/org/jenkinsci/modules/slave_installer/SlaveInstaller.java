@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**
- * Represents platform-specific installation process of a slave agent to the service wrapper.
- *
+ * Represents platform-specific agent installation process.
+ * E.g. this class is being used in {@code windows-slave-installer} module to install an agent to the service wrapper
  * @author Kohsuke Kawaguchi
  * @see SlaveInstallerFactory
  */
 public abstract class SlaveInstaller implements Serializable {
     /**
-     * Short one-line human readable name of what this slave installer does.
+     * Short one-line human readable name of what this agent installer does.
      * This can be used as a GUI menu item, text in the button, etc, to
      * have the user initiate the {@link #install(LaunchConfiguration,Prompter)} call.
      */
@@ -32,8 +32,8 @@ public abstract class SlaveInstaller implements Serializable {
     public abstract Localizable getConfirmationText();
 
     /**
-     * Installs the slave as a service, quit the current JVM, and let the newly installed service
-     * spawns and connects as a slave.
+     * Installs the agent as a service, quit the current JVM, and let the newly installed service
+     * spawns and connects as a Jenkins agent.
      *
      * The JVM termination is tied to the installation as some service wrappers (such as launchd)
      * cannot distinguish the service installation and launch.

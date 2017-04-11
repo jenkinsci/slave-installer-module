@@ -22,7 +22,7 @@ public abstract class SlaveInstallerFactory implements ExtensionPoint {
      * of the given {@link SlaveComputer}, create one and return its {@link SlaveInstaller}.
      *
      * @param c
-     *      Slave that's online.
+     *      Agent that's online.
      */
     // this method was the original abstraction in 1.0, which can be now implemented on top of createIfApplicable(Channel)
     public SlaveInstaller createIfApplicable(SlaveComputer c) throws IOException, InterruptedException {
@@ -68,9 +68,10 @@ public abstract class SlaveInstallerFactory implements ExtensionPoint {
 
     /**
      * All the registered {@link SlaveInstallerFactory}s.
+     * @return collection of the extension point implementations
      */
     public static ExtensionList<SlaveInstallerFactory> all() {
-        return Jenkins.getInstance().getExtensionList(SlaveInstallerFactory.class);
+        return ExtensionList.lookup(SlaveInstallerFactory.class);
     }
 
     private static final Logger LOGGER = Logger.getLogger(SlaveInstallerFactory.class.getName());

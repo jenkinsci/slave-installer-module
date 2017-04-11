@@ -1,7 +1,9 @@
 package org.jenkinsci.modules.slave_installer.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.FilePath;
 import hudson.Util;
+import hudson.model.Slave;
 import hudson.remoting.Callable;
 import hudson.remoting.Channel;
 import hudson.remoting.Engine;
@@ -24,14 +26,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static javax.swing.JOptionPane.*;
+import jenkins.security.MasterToSlaveCallable;
 
 /**
- * When executed via {@link Channel#call(Callable)} on a slave,
- * adds a GUI menu to install the slave as a platform-specific service.
+ * When executed via {@link Channel#call(Callable)} on an agent,
+ * adds a GUI menu to install the agent as a platform-specific service.
  *
  * @author Kohsuke Kawaguchi
  */
-public class InstallerGui implements Callable<Void,IOException> {
+public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
     private final SlaveInstaller installer;
     private final FilePath slaveRoot;
     private final String jnlpMac;
@@ -41,8 +44,15 @@ public class InstallerGui implements Callable<Void,IOException> {
 
     public InstallerGui(SlaveInstaller installer, SlaveComputer sc) {
         this.installer = installer;
-        this.slaveRoot = sc.getNode().getRootPath();
-        jnlpMac = sc.getJnlpMac();
+        final Slave node = sc.getNode();
+        if (node == null) {
+            throw new IllegalStateException("The configration has change and the node for computer " + 
+                    sc.getName() + " is removed");
+        }
+        
+        // TODO: missing null check
+        this.slaveRoot = node.getRootPath();
+        this.jnlpMac = sc.getJnlpMac();
     }
 
     public InstallerGui(SlaveInstaller installer, FilePath slaveRoot, String jnlpMac) {
@@ -52,7 +62,7 @@ public class InstallerGui implements Callable<Void,IOException> {
     }
 
     /**
-     * To be executed on each slave JVM.
+     * To be executed on each agent JVM.
      */
     public Void call() throws IOException {
         dialog = MainDialog.get();
@@ -136,12 +146,13 @@ public class InstallerGui implements Callable<Void,IOException> {
 
     /**
      * {@link LaunchConfiguration} that controls what process will be run under the service wrapper
-     * when the slave installation happens through GUI.
+     * when the agent installation happens through GUI.
      *
-     * Conceptually, this can be thought of as a recovered memory of how this slave JVM has been started.
-     * This is "recovered", because we can't really reliably tell from within the slave itself, but
-     * nonetheless it's a piece of information scoped to the slave JVM. Hence singleton.
+     * Conceptually, this can be thought of as a recovered memory of how this agent JVM has been started.
+     * This is "recovered", because we can't really reliably tell from within the agent itself, but
+     * nonetheless it's a piece of information scoped to the agent JVM. Hence singleton.
      */
-    // XXX what is this for? no one ever writes to it
+    // TODO: what is this for? no one ever writes to it
+    @SuppressFBWarnings(value = "MS_SHOULD_BE_FINAL", justification = "Retained for API compaltibility")
     public static LaunchConfiguration LAUNCH_CONFIG;
 }

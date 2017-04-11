@@ -13,7 +13,7 @@ import java.net.URL;
  */
 public abstract class LaunchConfiguration {
     /**
-     * To install a slave on a system, sometimes the installer needs to place some files (including
+     * To install an agent on a system, sometimes the installer needs to place some files (including
      * configuration files, binaries, etc.)
      *
      * <p>
@@ -24,7 +24,7 @@ public abstract class LaunchConfiguration {
      * <p>
      * Because of this, the caller will provide a directory that allows installer to place some files. The installer
      * is encourage to use platform dependent conventional locations over this storage area. Typically,
-     * this is the remote file system root of the slave.
+     * this is the remote file system root of the agent.
      */
     public abstract File getStorage() throws IOException;
 
