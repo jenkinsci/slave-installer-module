@@ -139,7 +139,7 @@ public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
     }
 
     protected URL getJnlpUrl() throws MalformedURLException {
-        return new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(engine.slaveName)+"/slave-agent.jnlp");
+        return new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(engine.getAgentName())+"/slave-agent.jnlp");
     }
 
     private static final long serialVersionUID = 1L;

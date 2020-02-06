@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.42</version>
+    <version>4.0-beta-4</version>
     <relativePath />
   </parent>
 
@@ -29,7 +29,7 @@
   </licenses>
 
   <properties>
-    <jenkins.version>2.60.3</jenkins.version>
+    <jenkins.version>2.220-rc29287.ce735e959d1a</jenkins.version>
     <java.level>8</java.level>
   </properties>
 
