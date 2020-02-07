@@ -1,6 +1,13 @@
 Release Notes
 ===
 
+### 1.7
+
+Release Date: Feb 07, 2020
+
+* [JENKINS-60926](https://issues.jenkins-ci.org/browse/JENKINS-60926) - Fix the binary compatibility with Remoting 4.0+ (caused regression in Jenkins 2.217)
+* [PR #4](https://github.com/jenkinsci/slave-installer-module/pull/4) - Update Parent POM and dependencies to recent versions
+
 ### 1.6
 
 Release Date: Aug 04, 2017
