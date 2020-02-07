@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -139,7 +142,26 @@ public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
     }
 
     protected URL getJnlpUrl() throws MalformedURLException {
-        return new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(engine.getAgentName())+"/slave-agent.jnlp");
+        return new URL(engine.getHudsonUrl(),"computer/"+ Util.rawEncode(determineAgentName(engine))+"/slave-agent.jnlp");
+    }
+
+    private String determineAgentName(Engine engine) throws MalformedURLException {
+        Class<Engine> engineClass = Engine.class;
+        try {
+            Method getAgentName = engineClass.getMethod("getAgentName");
+            Object result = getAgentName.invoke(engine);
+            return result.toString();
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            // try using the older field
+        }
+        try {
+            Field slaveName = engineClass.getField("slaveName");
+            Object result = slaveName.get(engine);
+            return result.toString();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+
+        }
+        throw new MalformedURLException("Unable to determine agent name.");
     }
 
     private static final long serialVersionUID = 1L;
