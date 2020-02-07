@@ -151,14 +151,14 @@ public class InstallerGui extends MasterToSlaveCallable<Void,IOException> {
             Method getAgentName = engineClass.getMethod("getAgentName");
             Object result = getAgentName.invoke(engine);
             return result.toString();
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
             // try using the older field
         }
         try {
             Field slaveName = engineClass.getField("slaveName");
             Object result = slaveName.get(engine);
             return result.toString();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
 
         }
         throw new MalformedURLException("Unable to determine agent name.");
