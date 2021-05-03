@@ -9,16 +9,16 @@
 
   <groupId>org.jenkins-ci.modules</groupId>
   <artifactId>slave-installer</artifactId>
-  <version>1.8-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <packaging>jenkins-module</packaging>
   <name>Agent installer module</name>
   <description>Base abstraction for platform-specific Jenkins agent installer</description>
 
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-module.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-module.git</developerConnection>
-    <url>https://github.com/jenkinsci/${project.artifactId}-module</url>
-    <tag>HEAD</tag>
+    <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/${gitHubRepo}.git</developerConnection>
+    <url>https://github.com/${gitHubRepo}</url>
+    <tag>${scmTag}</tag>
   </scm>
 
   <licenses>
@@ -29,8 +29,11 @@
   </licenses>
 
   <properties>
+    <revision>1.8</revision>
+    <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.60.3</jenkins.version>
     <java.level>8</java.level>
+    <gitHubRepo>jenkinsci/${project.artifactId}-module</gitHubRepo>
   </properties>
 
   <dependencies>
